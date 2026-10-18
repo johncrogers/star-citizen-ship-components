@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ship Components</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <div class="title-row">
+        <h1>Ship Components</h1>
+        <nav class="site-links" id="siteLinks" aria-label="Other sites"></nav>
+      </div>
+      <p class="meta" id="meta"></p>
+    </div>
+    <div class="total" id="total"></div>
+  </header>
+
+  <div class="pending" id="pending" hidden></div>
+
+  <nav class="scope" id="scope" aria-label="View"></nav>
+
+  <div class="catalog-only">
+    <section class="toolbar">
+      <input id="search" type="search" placeholder="Search, or filter: type:cooler size:2 grade:a dps>=1000 is:buyable…" autocomplete="off" spellcheck="false">
+      <button type="button" id="filtersToggle" class="ghost filters-toggle" aria-expanded="false" aria-controls="filterPanel">Filters</button>
+      <div class="chips" id="categoryChips"></div>
+      <select id="availability" aria-label="Availability">
+        <option value="">Any availability</option>
+        <option value="buy">Sold in shops</option>
+        <option value="loot">Loot only</option>
+        <option value="craft">Crafted only</option>
+        <option value="event">Event reward</option>
+        <option value="none">Not sold in game</option>
+      </select>
+      <select id="owned" aria-label="Owned">
+        <option value="">Wanted &amp; owned</option>
+        <option value="wanted">Not owned yet</option>
+        <option value="owned">Owned</option>
+      </select>
+      <select id="sort" aria-label="Sort">
+        <option value="list">List order</option>
+        <option value="price-asc">Price: low → high</option>
+        <option value="price-desc">Price: high → low</option>
+        <option value="name">Name</option>
+        <option value="manufacturer">Manufacturer</option>
+        <option value="stat:size">Size: biggest first</option>
+        <option value="stat:dps">DPS: highest first</option>
+        <option value="stat:alpha">Damage per shot: highest first</option>
+        <option value="stat:range">Range: longest first</option>
+        <option value="stat:shield">Shield HP: most first</option>
+        <option value="stat:regen">Shield regen: fastest first</option>
+        <option value="stat:output">Power output: most first</option>
+        <option value="stat:cooling">Cooling: most first</option>
+        <option value="stat:qt">Quantum speed: fastest first</option>
+        <option value="statlow:spool">Spool time: quickest first</option>
+        <option value="stat:damage">Missile damage: most first</option>
+        <option value="stat:mining">Laser power: most first</option>
+        <option value="statlow:em">EM signature: quietest first</option>
+      </select>
+    </section>
+
+    <section class="filter-panel" id="filterPanel" hidden></section>
+    <div class="active-filters" id="activeFilters"></div>
+
+    <main class="layout">
+      <ul class="list" id="list"></ul>
+      <article class="detail" id="detail"></article>
+    </main>
+  </div>
+
+  <main class="plan-view" id="planView" hidden></main>
+
+  <script src="site.js"></script>
+  <script src="catalog.data.js"></script>
+  <script src="components.data.js"></script>
+  <script src="wishlist.js"></script>
+  <script src="owned.js"></script>
+  <script src="builds.js"></script>
+  <script src="common.js"></script>
+  <script src="filters.js"></script>
+  <script src="planner.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
