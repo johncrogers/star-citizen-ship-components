@@ -21,9 +21,9 @@
   const SCOPE_KEY = "sc-ship-components:scope";
   let savedScope = "all";
   try { savedScope = localStorage.getItem(SCOPE_KEY) || (Object.keys(Wishlist.all()).length ? "wishlist" : "all"); } catch (e) { /* storage unavailable */ }
-  if (savedScope === "plan" || savedScope === "builds") savedScope = "all"; // the hash opens those
+  if (savedScope === "plan" || savedScope === "builds" || savedScope === "tradeoffs") savedScope = "all"; // the hash opens those
   const state = { scope: savedScope, query: "", category: "", availability: "", owned: "", sort: "list", selected: null };
-  const planMode = () => state.scope === "plan" || state.scope === "builds";
+  const planMode = () => state.scope === "plan" || state.scope === "builds" || state.scope === "tradeoffs";
 
   const $ = (id) => document.getElementById(id);
 
@@ -96,6 +96,7 @@
       ["all", "All parts", items.length],
       ["plan", "Loadout planner", null],
       ["builds", "My builds", Object.keys(Builds.all()).length],
+      ["tradeoffs", "Trade-offs", null],
     ]
       .map(([k, label, n]) => `<button class="tab${state.scope === k ? " on" : ""}" data-scope="${k}">${label}${n != null ? ` <span>${fmt(n)}</span>` : ""}</button>`)
       .join("");
@@ -343,6 +344,11 @@
       $("total").innerHTML = "";
       return;
     }
+    if (state.scope === "tradeoffs") {
+      TradeOffs.render($("planView"));
+      $("total").innerHTML = "";
+      return;
+    }
     renderFilters();
     renderChips();
     renderList();
@@ -363,7 +369,7 @@
   // #builds opens My builds.
   function selectFromHash() {
     const h = decodeURIComponent(location.hash.slice(1));
-    if (h === "builds") return setScope("builds");
+    if (h === "builds" || h === "tradeoffs") return setScope(h);
     if (h === "plan" || h.startsWith("plan=")) {
       const [ship, build] = h.slice(5).split("/");
       Planner.open(ship && shipById.has(ship) ? ship : null, build || null);
@@ -413,8 +419,8 @@
     if (!btn) return;
     setScope(btn.dataset.scope);
     if (btn.dataset.scope === "plan") Planner.syncHash();
-    else if (btn.dataset.scope === "builds") try { history.replaceState(null, "", "#builds"); } catch (err) { /* file:// */ }
-    else if (location.hash.startsWith("#plan") || location.hash === "#builds") try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* file:// */ }
+    else if (btn.dataset.scope === "builds" || btn.dataset.scope === "tradeoffs") try { history.replaceState(null, "", `#${btn.dataset.scope}`); } catch (err) { /* file:// */ }
+    else if (location.hash.startsWith("#plan") || location.hash === "#builds" || location.hash === "#tradeoffs") try { history.replaceState(null, "", location.pathname + location.search); } catch (err) { /* file:// */ }
     render();
   });
   $("categoryChips").addEventListener("click", (e) => {
@@ -424,6 +430,9 @@
     render();
   });
   Planner.bind($("planView"));
+  TradeOffs.bind($("planView"), render);
+  let resizeTimer;
+  window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (state.scope === "tradeoffs") render(); }, 150); });
   Planner.onChange(render);
   const scrollToSelected = () => {
     const row = document.querySelector(".row.active");

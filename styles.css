@@ -500,3 +500,54 @@ details.mixed summary { cursor: pointer; color: var(--accent); font-size: 12px; 
   .scope { overflow-x: auto; }
   .tab { white-space: nowrap; }
 }
+
+/* ── Power budget ──────────────────────────── */
+.pb { display: flex; flex-direction: column; gap: 8px; }
+.pb-row { display: grid; grid-template-columns: 44px 1fr 74px; gap: 8px; align-items: center; font-size: 13px; }
+.pb-label { color: var(--muted); }
+.pb-track { position: relative; display: flex; gap: 2px; height: 12px; }
+.pb-seg { display: block; height: 12px; min-width: 2px; }
+.pb-seg:last-of-type { border-radius: 0 4px 4px 0; }
+.pb-out { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; background: var(--text); }
+.pb-val { text-align: right; font-variant-numeric: tabular-nums; }
+.pb-val small { color: var(--muted); }
+.pb-legend { font-size: 12px; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.pb-key { display: inline-block; width: 2px; height: 12px; background: var(--text); margin-right: 6px; vertical-align: -2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); }
+
+/* ── Charts (trade-offs) ───────────────────── */
+:root { --vm-wanted: #3987e5; --vm-owned: #199e70; --vm-other: #4d5866; }
+.to-card { position: relative; }
+.vm-controls { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; font-size: 13px; color: var(--muted); }
+.vm-controls label { display: flex; align-items: center; gap: 6px; }
+.vm-controls select { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font: inherit; font-size: 14px; }
+.vm-check input { accent-color: var(--accent); margin: 0; }
+.to-plot { width: 100%; overflow: hidden; margin-top: 6px; }
+.vm-svg { display: block; }
+.vm-grid { stroke: #222b36; stroke-width: 1; }
+.vm-axis { stroke: #3a4552; stroke-width: 1; }
+.vm-tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.vm-label { fill: var(--muted); font-size: 12px; }
+.vm-hit { fill: transparent; }
+.vm-dot { stroke: var(--panel); stroke-width: 2; }
+.to-pt.back .vm-dot { fill: var(--vm-other); stroke-width: 1; }
+.to-pt.front .vm-dot { fill: var(--vm-wanted); }
+.to-pt.owned .vm-dot { fill: var(--vm-owned); }
+.to-pt.unsold .vm-dot { fill: var(--panel); stroke: var(--vm-other); stroke-width: 2; }
+.to-pt.unsold.front .vm-dot { stroke: var(--vm-wanted); }
+.to-pt.unsold.owned .vm-dot { stroke: var(--vm-owned); }
+.to-pt.wanted .vm-dot { stroke: var(--star); stroke-width: 2; }
+.vm-pt:hover .vm-dot, .vm-pt:focus .vm-dot { stroke: var(--text); }
+.vm-pt:focus { outline: none; }
+.vm-name { fill: var(--text); font-size: 11px; paint-order: stroke; stroke: var(--panel); stroke-width: 3px; pointer-events: none; }
+.vm-tip { position: absolute; z-index: 5; max-width: 320px; padding: 6px 10px; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; pointer-events: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); }
+.to-key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; background: var(--vm-other); }
+.to-key.front { background: var(--vm-wanted); }
+.to-key.owned { background: var(--vm-owned); }
+.to-key.wanted { background: transparent; border: 2px solid var(--star); }
+.to-key.unsold { background: transparent; border: 2px solid var(--vm-other); }
+.to-st { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+.to-st.owned { color: var(--vm-owned); }
+.to-st.wanted { color: var(--star); }
+.cmp-scroll { overflow-x: auto; }

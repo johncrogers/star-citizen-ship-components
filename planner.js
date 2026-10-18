@@ -64,7 +64,7 @@
       pilotDps: 0, pilotSustained: 0, pilotAlpha: 0, turretDps: 0, guns: 0,
       missiles: 0, missileDamage: 0, shieldHp: 0, shieldRegen: 0,
       powerOut: 0, powerDraw: 0, coolOut: 0, coolDraw: 0, qtSpeed: null, spool: null,
-      minePower: 0, em: 0, ir: 0,
+      minePower: 0, em: 0, ir: 0, drawBy: {},
     };
     walk(tree, (n, up) => {
       const s = n.cur && n.cur.stats;
@@ -85,7 +85,11 @@
       }
       if (type === "Shield") { t.shieldHp += s.shieldHp || 0; t.shieldRegen += s.shieldRegen || 0; }
       if (type === "PowerPlant") t.powerOut += s.powerOut || 0;
-      else t.powerDraw += s.power || 0;
+      else {
+        t.powerDraw += s.power || 0;
+        const sys = DRAW_SYSTEM[type] || "other";
+        if (s.power) t.drawBy[sys] = (t.drawBy[sys] || 0) + s.power;
+      }
       if (type === "Cooler") t.coolOut += s.coolOut || 0;
       t.coolDraw += s.coolant || 0;
       if (type === "QuantumDrive" && t.qtSpeed == null) { t.qtSpeed = s.qtSpeed ?? null; t.spool = s.spool ?? null; }
@@ -95,6 +99,37 @@
     });
     for (const k of Object.keys(t)) if (typeof t[k] === "number") t[k] = Math.round(t[k] * 10) / 10;
     return t;
+  }
+
+  // Which system a part's power draw counts towards, for the power budget chart.
+  const DRAW_SYSTEM = {
+    WeaponGun: "weapons", Missile: "weapons", MissileLauncher: "weapons", Turret: "weapons",
+    Shield: "shields", Cooler: "coolers", QuantumDrive: "quantum", JumpDrive: "quantum", Radar: "radar",
+    WeaponMining: "utility", MiningModifier: "utility", SalvageHead: "utility", SalvageModifier: "utility",
+    TractorBeam: "utility", TowingBeam: "utility", QuantumInterdictionGenerator: "utility", EMP: "utility",
+  };
+  const SYSTEMS = [
+    ["weapons", "Weapons", "#3987e5"], ["shields", "Shields", "#d95926"], ["coolers", "Coolers", "#199e70"],
+    ["quantum", "Quantum", "#c98500"], ["radar", "Radar", "#d55181"], ["utility", "Utility", "#008300"], ["other", "Other", "#4d5866"],
+  ];
+
+  // Two stacked bars (stock and this build) of power draw by system, each with a marker for the
+  // power plant's output. Draw past the marker means you'll have to choose what runs at full power.
+  function powerBudget(a, b) {
+    if (!a.powerOut && !b.powerOut) return "";
+    const max = Math.max(a.powerOut, b.powerOut, a.powerDraw, b.powerDraw) * 1.05 || 1;
+    const used = SYSTEMS.filter(([k]) => a.drawBy[k] || b.drawBy[k]);
+    const bar = (label, t) => `<div class="pb-row">
+        <span class="pb-label">${label}</span>
+        <span class="pb-track">
+          ${used.map(([k, name, color]) => t.drawBy[k] ? `<span class="pb-seg" style="width:${(t.drawBy[k] / max) * 100}%;background:${color}" title="${esc(`${name}: ${fmt(t.drawBy[k])} segments`)}"></span>` : "").join("")}
+          <span class="pb-out" style="left:${(t.powerOut / max) * 100}%" title="Power plant output: ${fmt(t.powerOut)} segments"></span>
+        </span>
+        <span class="pb-val">${fmt(t.powerDraw)} <small>of ${fmt(t.powerOut)}</small></span>
+      </div>`;
+    return `<h3>Power budget</h3>
+      <div class="pb">${bar("Stock", a)}${bar("Build", b)}</div>
+      <div class="legend pb-legend">${used.map(([, name, color]) => `<span><i class="swatch" style="background:${color}"></i>${esc(name)}</span>`).join("")}<span><i class="pb-key"></i>Power plant output</span></div>`;
   }
 
   const TOTAL_ROWS = [
@@ -348,6 +383,7 @@
       </div>
       <h3>Shopping list</h3>
       ${list}
+      ${powerBudget(a, b)}
       <h3>Stock vs this build</h3>
       <table class="totals"><thead><tr><th></th><th class="num">Stock</th><th class="num">Build</th><th class="num">Change</th></tr></thead><tbody>${rows}</tbody></table>
       ${power}`;
