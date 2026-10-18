@@ -10,6 +10,9 @@
   const Planner = window.Planner;
   const locationsHref = ((window.SITE || {}).links || []).find((l) => l.id === "locations")?.href;
   const shipsHref = ((window.SITE || {}).links || []).find((l) => l.id === "ships")?.href;
+  // Names link to their entry in the glossary app (it finds the entry by name).
+  const glossaryHref = ((window.SITE || {}).links || []).find((l) => l.id === "glossary")?.href;
+  const lookUp = (name) => (glossaryHref && name ? `<a class="lookup" href="${esc(glossaryHref)}#find/${encodeURIComponent(name)}" title="Look up ${esc(name)} in the glossary">${esc(name)}</a>` : esc(name));
   const shopLink = (b) =>
     locationsHref && b.code
       ? `<a href="${esc(locationsHref)}#code:${encodeURIComponent(b.code)}" title="Where it is and how to get there">${esc(b.location)}</a>`
@@ -115,9 +118,9 @@
   }
 
   const gradeText = (s) => (s.grade ? `${s.class ? s.class + " " : ""}grade ${s.grade}` : s.class || "");
-  const subLine = (s) =>
+  const subLine = (s, linked) =>
     [s.manufacturer !== "Unknown" ? s.manufacturer : null, s.type, s.stats.size && s.type !== "Paint" ? `S${s.stats.size}` : null, gradeText(s)]
-      .filter(Boolean).map(esc).join(" · ");
+      .filter(Boolean).map((x, i) => (i === 0 && linked && s.manufacturer !== "Unknown" ? lookUp(x) : esc(x))).join(" · ");
 
   function renderList() {
     const list = filtered();
@@ -263,7 +266,7 @@
       <div class="detail-head">
         <div>
           <h2>${esc(s.name)}</h2>
-          <p class="sub">${subLine(s)}${s.category !== badgeCat ? ` · ${esc(s.category)}` : ""}</p>
+          <p class="sub">${subLine(s, true)}${s.category !== badgeCat ? ` · ${esc(s.category)}` : ""}</p>
         </div>
         <div class="badges">
           <span class="${tagClass(badgeCat)}">${esc(badgeCat)}</span>
@@ -442,7 +445,8 @@
   onChange(render);
 
   const initialQuery = new URLSearchParams(location.search).get("q");
-  if (initialQuery) state.query = $("search").value = initialQuery;
+  // A search link from another app (index.html?q=...) is about everything, not just my wishlist.
+  if (initialQuery) { state.query = $("search").value = initialQuery; if (state.scope === "wishlist") state.scope = "all"; }
   selectFromHash();
   render();
   if (location.hash && !planMode()) scrollToSelected();

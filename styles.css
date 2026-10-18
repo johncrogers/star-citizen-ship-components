@@ -551,3 +551,7 @@ details.mixed summary { cursor: pointer; color: var(--accent); font-size: 12px; 
 .to-st.owned { color: var(--vm-owned); }
 .to-st.wanted { color: var(--star); }
 .cmp-scroll { overflow-x: auto; }
+
+/* Names that link to the glossary: quiet until hovered. */
+a.lookup { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+a.lookup:hover { color: var(--accent); }
