@@ -39,7 +39,7 @@ a { color: var(--accent); }
 }
 .top h1 { margin: 0; font-size: 22px; letter-spacing: 0.5px; }
 .title-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-.site-links { display: flex; gap: 8px; }
+.site-links { display: flex; flex-wrap: wrap; gap: 8px; }
 .site-links a { font-size: 13px; text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; }
 .site-links a:hover { border-color: var(--accent); }
 .meta { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
