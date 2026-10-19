@@ -74,6 +74,7 @@
   <main class="plan-view" id="planView" hidden></main>
 
   <script src="site.js"></script>
+  <script>/* "What's new" dot: loads whatsnew.js from the changelog app linked in site.js. */(function () { var l = ((window.SITE || {}).links || []).filter(function (x) { return x.id === "changelog"; })[0]; if (!l) return; var s = document.createElement("script"); s.src = l.href.replace(/index\.html$/, "") + "whatsnew.js"; s.async = true; document.head.appendChild(s); })();</script>
   <script src="catalog.data.js"></script>
   <script src="components.data.js"></script>
   <script src="wishlist.js"></script>
