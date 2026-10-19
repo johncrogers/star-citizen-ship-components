@@ -3,87 +3,125 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ship Components</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta name="referrer" content="origin">
+  <meta name="robots" content="noindex">
+  <title>Ship components has moved</title>
+  <link rel="canonical" href="https://star-citizen.john-clinton-rogers.workers.dev/components/">
+  <noscript><meta http-equiv="refresh" content="0; url=https://star-citizen.john-clinton-rogers.workers.dev/components/"></noscript>
+  <style>body{font:16px/1.5 system-ui,sans-serif;max-width:40rem;margin:3rem auto;padding:0 16px;color:#e6edf3;background:#0d1117}a{color:#4cc2ff}</style>
 </head>
 <body>
-  <header class="top">
-    <div>
-      <div class="title-row">
-        <h1>Ship Components</h1>
-        <nav class="site-links" id="siteLinks" aria-label="Other sites"></nav>
-      </div>
-      <p class="meta" id="meta"></p>
-    </div>
-    <div class="total" id="total"></div>
-  </header>
-
-  <div class="pending" id="pending" hidden></div>
-
-  <nav class="scope" id="scope" aria-label="View"></nav>
-
-  <div class="catalog-only">
-    <section class="toolbar">
-      <input id="search" type="search" placeholder="Search, or filter: type:cooler size:2 grade:a dps>=1000 is:buyable…" autocomplete="off" spellcheck="false">
-      <button type="button" id="filtersToggle" class="ghost filters-toggle" aria-expanded="false" aria-controls="filterPanel">Filters</button>
-      <div class="chips" id="categoryChips"></div>
-      <select id="availability" aria-label="Availability">
-        <option value="">Any availability</option>
-        <option value="buy">Sold in shops</option>
-        <option value="loot">Loot only</option>
-        <option value="craft">Crafted only</option>
-        <option value="event">Event reward</option>
-        <option value="none">Not sold in game</option>
-      </select>
-      <select id="owned" aria-label="Owned">
-        <option value="">Wanted &amp; owned</option>
-        <option value="wanted">Not owned yet</option>
-        <option value="owned">Owned</option>
-      </select>
-      <select id="sort" aria-label="Sort">
-        <option value="list">List order</option>
-        <option value="price-asc">Price: low → high</option>
-        <option value="price-desc">Price: high → low</option>
-        <option value="name">Name</option>
-        <option value="manufacturer">Manufacturer</option>
-        <option value="stat:size">Size: biggest first</option>
-        <option value="stat:dps">DPS: highest first</option>
-        <option value="stat:alpha">Damage per shot: highest first</option>
-        <option value="stat:range">Range: longest first</option>
-        <option value="stat:shield">Shield HP: most first</option>
-        <option value="stat:regen">Shield regen: fastest first</option>
-        <option value="stat:output">Power output: most first</option>
-        <option value="stat:cooling">Cooling: most first</option>
-        <option value="stat:qt">Quantum speed: fastest first</option>
-        <option value="statlow:spool">Spool time: quickest first</option>
-        <option value="stat:damage">Missile damage: most first</option>
-        <option value="stat:mining">Laser power: most first</option>
-        <option value="statlow:em">EM signature: quietest first</option>
-      </select>
-    </section>
-
-    <section class="filter-panel" id="filterPanel" hidden></section>
-    <div class="active-filters" id="activeFilters"></div>
-
-    <main class="layout">
-      <ul class="list" id="list"></ul>
-      <article class="detail" id="detail"></article>
-    </main>
+  <h1>Ship components has moved</h1>
+  <p>All the Star Citizen tools are now on one site. Taking you to <a id="to" href="https://star-citizen.john-clinton-rogers.workers.dev/components/">the new address</a>…</p>
+  <div id="big" hidden>
+    <p>Your saved data is too big to bring over by link. <a id="download" download="star-citizen-saved-data.json" href="#">Download a copy</a>, then <a href="https://star-citizen.john-clinton-rogers.workers.dev/components/">continue to the new site</a>.</p>
   </div>
+  <p><a href="?sc-move=1">Bring my saved data again</a></p>
+  <script>
+// The old GitHub Pages sites' redirect page (hosting-migration, D-045, D-046). Each of the ten repos
+// serves this script, inlined into its index.html and 404.html by publish-redirects.ts, so every
+// old address (deep links too) lands on the same view on the new site.
+// The first time, it also carries the browser's saved data (every "sc-" key) to /moved, in the
+// part of the address after #, which never reaches a server. The old copy is never deleted.
+// "?sc-move=1" sends the data again.
+// Plain JavaScript, like the legacy apps: no build step. Tested in redirect.test.ts.
+((win) => {
+  const SITE = "https://star-citizen.john-clinton-rogers.workers.dev";
+  const PATHS = {"ships":"/ships/","items":"/items/","ship-components":"/components/","dashboard":"/dashboard/","contracts":"/contracts/","careers":"/careers/","locations":"/locations/","glossary":"/glossary/","changelog":"/changelog/","roadmap":"/roadmap/"}; // old repo name ("ship-components") -> new path ("/components/")
+  const MARK = "sc-moved";
+  const AGAIN = "sc-move";
+  const LIMIT = 1_500_000; // characters of encoded data: well under browsers' address limits
 
-  <main class="plan-view" id="planView" hidden></main>
+  /** The new site's path for an old address, keeping the page, query and #. */
+  const newPath = (pathname, search, hash) => {
+    const m = /^\/star-citizen-([a-z-]+)(\/.*)?$/.exec(pathname);
+    const base = m && PATHS[m[1]];
+    if (!base) return "/";
+    let rest = (m[2] || "/").slice(1);
+    if (rest === "index.html") rest = "";
+    const query = search
+      .replace(/^\?/, "")
+      .split("&")
+      .filter((p) => p && p.split("=")[0] !== AGAIN)
+      .join("&");
+    return `${base}${rest}${query ? `?${query}` : ""}${hash}`;
+  };
 
-  <script src="site.js"></script>
-  <script>/* "What's new" dot: loads whatsnew.js from the changelog app linked in site.js. */(function () { var l = ((window.SITE || {}).links || []).filter(function (x) { return x.id === "changelog"; })[0]; if (!l) return; var s = document.createElement("script"); s.src = l.href.replace(/index\.html$/, "") + "whatsnew.js"; s.async = true; document.head.appendChild(s); })();</script>
-  <script src="catalog.data.js"></script>
-  <script src="components.data.js"></script>
-  <script src="wishlist.js"></script>
-  <script src="owned.js"></script>
-  <script src="builds.js"></script>
-  <script src="common.js"></script>
-  <script src="filters.js"></script>
-  <script src="planner.js"></script>
-  <script src="tradeoffs.js"></script>
-  <script src="app.js"></script>
+  const savedData = (storage) => {
+    const data = {};
+    let count = 0;
+    for (let i = 0; i < storage.length; i++) {
+      const key = storage.key(i);
+      if (key?.startsWith("sc-") && key !== MARK) {
+        data[key] = storage.getItem(key);
+        count++;
+      }
+    }
+    return count ? data : null;
+  };
+
+  const encode = (data) => {
+    const bytes = new TextEncoder().encode(JSON.stringify(data));
+    let binary = "";
+    for (const b of bytes) binary += String.fromCharCode(b);
+    return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  };
+
+  /** Where to send this visit: { url }, { url, carried }, or { tooBig, url, data }. */
+  const plan = (location, storage) => {
+    const path = newPath(location.pathname, location.search, location.hash);
+    const again = new RegExp(`(^|[?&])${AGAIN}=`).test(location.search);
+    let data = null;
+    try {
+      if (again || !storage.getItem(MARK)) data = savedData(storage);
+    } catch {
+      data = null; // storage blocked: just redirect
+    }
+    if (!data) return { url: SITE + path };
+    const encoded = encode(data);
+    if (encoded.length > LIMIT) return { tooBig: true, url: SITE + path, data };
+    return { url: `${SITE}/moved#data=${encoded}&to=${encodeURIComponent(path)}`, carried: true };
+  };
+
+  const show = (doc, p) => {
+    const link = doc.getElementById("to");
+    if (link) link.href = p.url;
+    if (!p.tooBig) return;
+    const box = doc.getElementById("big");
+    const download = doc.getElementById("download");
+    if (box) box.hidden = false;
+    if (download) {
+      download.href = `data:application/json;charset=utf-8,${encodeURIComponent(JSON.stringify(p.data))}`;
+    }
+  };
+
+  const run = (w) => {
+    let storage = null;
+    try {
+      storage = w.localStorage;
+    } catch {
+      storage = null;
+    }
+    const p = storage
+      ? plan(w.location, storage)
+      : { url: SITE + newPath(w.location.pathname, w.location.search, w.location.hash) };
+    show(w.document, p);
+    if (p.tooBig) return p;
+    if (p.carried) {
+      try {
+        storage.setItem(MARK, new Date().toISOString());
+      } catch {
+        // fine: it offers to carry the data again next time
+      }
+    }
+    w.location.replace(p.url);
+    return p;
+  };
+
+  win.ScRedirect = { newPath, plan, run };
+  if (!win.ScRedirectTest) run(win);
+})(window);
+
+  </script>
 </body>
 </html>
