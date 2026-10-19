@@ -174,6 +174,9 @@
   const setText = (q, key, value) =>
     rewrite(q, (t) => t.kind === "text" && t.field.key === key && !t.neg, [value ? `${key}:${quote(value)}` : ""]);
   const setFlag = (q, key, on) => rewrite(q, (t) => t.kind === "flag" && t.field.key === key && !t.neg, [on ? `is:${key}` : ""]);
+  // A flag that can be required, excluded or ignored: "on" → is:key, "off" → -is:key, "" → neither.
+  const setTri = (q, key, value) =>
+    rewrite(q, (t) => t.kind === "flag" && t.field.key === key, [value === "on" ? `is:${key}` : value === "off" ? `-is:${key}` : ""]);
   const setBound = (q, key, side, value) => {
     const n = parseNum(value);
     const own = (t) => t.kind === "num" && t.field.key === key && !t.neg;
@@ -248,6 +251,10 @@
       return t ? shortNum(t.op === "range" ? (side === "min" ? t.lo : t.hi) : t.lo) : "";
     };
     const flagOn = (key) => terms.some((t) => t.kind === "flag" && t.field.key === key && !t.neg);
+    const triVal = (key) => {
+      const t = terms.find((t) => t.kind === "flag" && t.field.key === key);
+      return t ? (t.neg ? "off" : "on") : "";
+    };
 
     const uniq = (arr) => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
     // Narrow the Type menu to the chosen category so it stays short.
@@ -277,6 +284,12 @@
               ${cur && !known ? `<option selected value="${esc(cur)}">${esc(cur)}</option>` : ""}
             </select></label>`;
         }).join("")}
+        <label><span>Wishlist</span>
+          <select data-fp-tri="wanted">
+            <option value="">Any</option>
+            <option value="on"${triVal("wanted") === "on" ? " selected" : ""}>On my wishlist</option>
+            <option value="off"${triVal("wanted") === "off" ? " selected" : ""}>Not on my wishlist</option>
+          </select></label>
       </div>
       <div class="fp-section fp-flags">
         ${PANEL_FLAGS.map((k) => `<label class="fp-flag"><input type="checkbox" data-fp-flag="${k}"${flagOn(k) ? " checked" : ""}> ${esc(FLAGS[k].label)}</label>`).join("")}
@@ -314,6 +327,7 @@
       const q = getQuery();
       if (t.dataset.fpText) setQuery(setText(q, t.dataset.fpText, t.value));
       else if (t.dataset.fpFlag) setQuery(setFlag(q, t.dataset.fpFlag, t.checked));
+      else if (t.dataset.fpTri) setQuery(setTri(q, t.dataset.fpTri, t.value));
       else if (t.dataset.fpNum) setQuery(setBound(q, t.dataset.fpNum, t.dataset.side, t.value));
     });
     el.addEventListener("click", (e) => {

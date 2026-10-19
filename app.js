@@ -318,6 +318,8 @@
 
   function setQuery(q) {
     state.query = q;
+    // "Not on my wishlist" can't match anything inside My wishlist, so show all parts.
+    if (state.scope === "wishlist" && /(^|\s)-is:(wanted|wishlist|wish)(\s|$)/i.test(q)) setScope("all");
     $("search").value = q;
     render();
     saveQueryToUrl();
